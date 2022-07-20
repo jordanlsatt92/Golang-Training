@@ -43,7 +43,15 @@ var tasks = allTasks{
     {
         ID: 3,
         Name: "John",
-        Dept: "IT",
+        Dept: "IT/Security",
+        BasicPay: 50000,
+        HRA: 0,
+        GrossPay: 0,
+    },
+	{
+        ID: 4,
+        Name: "Holly",
+        Dept: "HR/Security",
         BasicPay: 50000,
         HRA: 0,
         GrossPay: 0,
@@ -123,10 +131,15 @@ func calculateTask(w http.ResponseWriter, r *http.Request){
 			calculateTask = task
 			tasks = append(tasks[:index], tasks[index+1:]...)
 			calculateTask.ID = taskID
-			if strings.ToLower(task.Dept) == "it"{
-				calculateTask.HRA = .1
-			}else{
-				calculateTask.HRA = .05
+			dept:= strings.Split(calculateTask.Dept, "/")
+			for _,val := range dept{
+				if strings.ToLower(val) == "it"{
+					calculateTask.HRA = .1
+				}else if strings.ToLower(val) == "security"{
+					calculateTask.HRA += 0.14
+				}else{
+					calculateTask.HRA = .05
+				}
 			}
 			calculateTask.GrossPay = calculateTask.BasicPay*(1+calculateTask.HRA)
 			tasks = append(tasks, calculateTask)
